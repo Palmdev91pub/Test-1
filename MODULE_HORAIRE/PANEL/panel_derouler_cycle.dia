@@ -1,0 +1,147 @@
+/*******************************************************************************
+* OWNERSHIP
+*
+* PROJECT
+*
+* AUTHORS     COSYTEC SA
+*             Parc Club Orsay Universite
+*             4, rue Jean Rostand
+*             F-91893 Orsay Cedex, France
+* TEL         +33 1 60 19 37 38
+* FAX         +33 1 60 19 36 20
+* EMAIL       cosytec@cosytec.fr
+*
+* FILE        %M%
+* VERSION     %I%
+* DATE        %G%
+* COPYRIGHT   Copyright (c) 1994 COSYTEC SA
+*******************************************************************************/
+/*******************************************************************************
+% ATTENTION : Deux panels dans ce fichier
+*******************************************************************************/
+/***********************************************************************
+*
+* Panel de déroulement de cycle
+*
+***********************************************************************/
+frame_data(panel_derouler_cycle_t, frame(750, 430, text@roulement_cycle), default, [
+	modal(on),
+	pinned(off),
+	fixed(on),
+	open(off),
+	default_push_button(panel_derouler_cycle_t_check),
+	default_escape_button(panel_derouler_cycle_t_cancel)
+	]).
+
+canvas_data(panel_derouler_cycle_t, panel_derouler_cycle_t, place(0, 0, 1000, 1000), [
+	open(off)
+	], panel).
+
+panel_data(panel_derouler_cycle_t, text@size, [
+        % STRATEGIE DE DEROULEMENT
+        panel_item(group(panel_derouler_cycle_t_grp_1, text@strategie_deroulement_cycle, full_width-20, 50), pos(left+10, top-15)),
+	panel_item(text2(panel_derouler_generateur_cycle_t, text@generateur_de_cycle, '?', class, panel_derouler_cycle_t_changed), 
+	   pos(left+20, top-50),
+	   [class_name <- Class_Generateur, entry_width <- 200, label_width <- 120, attribute_name <- nom,  
+	    display_attribute <- nom, completion_mode <- on, unused <- '?',
+	    condition_method <- panel_derouler_cycle_t_generateur_condition]),
+	panel_item(text2(panel_derouler_date, text@deroule_juqu_au, '-', atom, none), 
+	   auto(10),
+	   [active <- off, label_width <- 130, entry_width <- 75]),
+
+        % CANEVAS & EQUIPE
+       panel_item(group(panel_derouler_cycle_t_grp_2, text@cycles, full_width-20, 80), pos(left+10, top-90)),
+	panel_item(text2(panel_derouler_cycle_t_canevas_t, text@canevas, '?', class, panel_derouler_cycle_t_changed), 
+	   pos(left+20, top-130),
+	   [class_name <- Class_Canevas, entry_width <- 200, label_width <- 120, attribute_name <- nom,  
+	    display_attribute <- nom, completion_mode <- on, unused <- '?', condition_method <- panel_derouler_cycle_t_canevas_t_condition]),
+	panel_item(text2(panel_derouler_cycle_t_lignes, text@lignes, 0, integer, panel_derouler_cycle_t_changed), 
+	   auto(10),
+	   [label_width <- 70, entry_width <- 50]), 
+	panel_item(text2(panel_derouler_cycle_t_amplitude, text@amplitude, 0, integer, panel_derouler_cycle_t_changed), 
+	   auto(10),
+	   [label_width <- 70, entry_width <- 50]), 
+
+	panel_item(text2(panel_derouler_cycle_t_equipe, text@equipe_cycle, '?', class, panel_derouler_cycle_t_changed), 
+	   pos(left+20, top-160),
+	   [class_name <- Class_Equipe, entry_width <- 200, label_width <- 120, attribute_name <- nom,  
+	    display_attribute <- nom, completion_mode <- on, unused <- '?', 
+	    condition_method <- panel_derouler_cycle_t_equipe_condition]),
+	panel_item(text2(panel_derouler_cycle_t_personne, text@personne, '?', class, panel_derouler_cycle_t_changed), 
+	   pos(left+20, top-160),
+	   [class_name <- personne, entry_width <- 200, label_width <- 120, attribute_name <- label,  
+	    display_attribute <- label, completion_mode <- on, unused <- '?', 
+	    condition_method <- panel_derouler_cycle_t_personne_condition]),
+	panel_item(text2(panel_derouler_cycle_t_personnes, text@personnes, 0, integer, panel_derouler_cycle_t_changed), 
+	   auto(10),
+		[label_width <- 70, entry_width <- 50]), 
+	panel_item(switch(panel_derouler_cycle_t_deroulement_personne, text@deroulement_par_personne, off, panel_derouler_cycle_t_changed), /*   */
+	   auto(10), []),
+
+	% DATES
+        panel_item(group(panel_derouler_cycle_t_grp_3, text@parametres_temporels, full_width-20, 80), pos(left+10, top-190)),
+
+	% Ligne 1
+	panel_item(switch(panel_derouler_cycle_si_full_amplitude, text@si_full_amplitude, on, panel_derouler_cycle_t_changed),
+	   pos(left+20, top-230), []),
+        panel_item(text2(panel_derouler_cycle_t_depart, text@date_depart, 0, date, panel_derouler_cycle_t_changed), 
+%	   auto(20),
+	   pos(left+175, top-230),
+	   [active <- on, label_width <- 80, entry_width <- 75, format <- short]),
+	panel_item(text2(panel_derouler_cycle_t_fin, text@date_arrivee, 0, date, panel_derouler_cycle_t_changed), 
+	   auto(20),
+	   [active <- off, label_width <- 80, entry_width <- 75, format <- short]),   
+	panel_item(text2(panel_derouler_cycle_t_occurence, text@occurences, 1, integer, panel_derouler_cycle_t_changed), 
+	   auto(20),
+           [label_width <- 80, entry_width <- 40, length<-3]), 
+
+	% Ligne 2
+	panel_item(text2(panel_derouler_cycle_t_numero_jour, text@no_jour, 1, integer, panel_derouler_cycle_t_changed), 
+	   pos(left+20, top-260),
+           [label_width <- 70, entry_width <- 50, min <- 1]), 
+        panel_item(text2(panel_derouler_cycle_t_depart_ref, text@date_depart_ref, 0, date, panel_derouler_cycle_t_changed), 
+%	   auto(20),
+	   pos(left+175, top-260),
+	   [active <- on, label_width <- 80, entry_width <- 75, format <- short]),
+        panel_item(text2(panel_derouler_cycle_t_fin_ref, text@date_arrivee_ref, 0, date, panel_derouler_cycle_t_changed), 
+	   auto(20),
+	   [active <- on, label_width <- 80, entry_width <- 75, format <- short]),
+
+ 
+	% OPTION de DEROULEMENT   
+        panel_item(group(panel_derouler_cycle_t_grp_4, text@options_deroulement, full_width-20, 80), pos(left+10, top-290)),
+
+	% Ligne 1
+	panel_item(switch(panel_derouler_cycle_rotation, text@rotaion_lignes, on, panel_derouler_cycle_t_changed),
+	   pos(left+20, top-330), []),
+	panel_item(text2(panel_derouler_cycle_t_ligne, text@num_premiere_ligne, 1, integer, panel_derouler_cycle_t_changed), 
+	   pos(left+280, top-330),
+           [label_width <- 70, entry_width <- 50]), 
+	panel_item(switch(panel_derouler_cycle_t_besoin, text@unassigned_activities, on, none),  /* text@derouler_besoin */
+	   pos(left+560, top-330), []),
+
+	% Ligne 2   
+	panel_item(switch(panel_derouler_cycle_t_si_remplacement, text@si_garder_remplacement, off, none),  
+	   pos(left+20, top-360), []),
+
+	panel_item(switch(panel_derouler_cycle_t_si_sans_chgt_planning, text@si_sans_chgt_planning, off, none),  
+	   pos(left+560, top-360), []),
+	   %%%%% ATTENTION %%% EMPLACEMENT D''ITEMS SPECIFIQUES APRES CE CHAMPS (VOIR AUTOLIB et F24)
+   
+        % BOUTONS
+	panel_item(button(panel_derouler_cycle_t_ok, text@appliquer, panel_derouler_cycle_t_pressed), pos(left+190, bottom+20), [label_width <- 70]),
+	panel_item(button(panel_derouler_cycle_t_check, text@check, panel_derouler_cycle_t_pressed), pos(left+280, bottom+20), [label_width <- 70]),
+	panel_item(button(panel_derouler_cycle_t_clean, text@supprimer, panel_derouler_cycle_t_pressed), pos(left+370, bottom+20), [label_width <- 70]),
+	panel_item(button(panel_derouler_cycle_t_cancel, text@fermer, panel_derouler_cycle_t_pressed), pos(left+460, bottom+20), [label_width <- 70])|Specific_Items]):-
+	(appl_mode_planif(heure) ->
+	    % Technicien
+	    [Class_Generateur, Class_Canevas, Class_Equipe] = [generateur_cycle_t, canevas_t, equipe_cycle_t]
+	;
+	    % Journaliste
+	    [Class_Generateur, Class_Canevas, Class_Equipe] = [generateur_cycle, canevas, equipe_cycle]
+	),
+	panel_derouler_cycle_t_get_specific_items(Specific_Items).
+
+
+
+% End Of File %
